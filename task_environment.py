@@ -10,11 +10,12 @@ class History(object):
 
 	def __init__(self, task_environment, agent, number_of_steps, initial_state=None):
 
-		state = task_environment.environment.state() if initial_state == None else intial_state
+		state = task_environment.environment.state() if initial_state == None else initial_state
 		history = [(state, None)]
 
 		for i in range(number_of_steps):
 			print 'STEP', i
+			print 'State', state.vacuum_location, state.dirty_tiles
 			percepts = [sensor(state) for sensor in task_environment.sensors]
 			action = agent.think(percepts)
 			print 'Percepts', percepts
