@@ -1,3 +1,5 @@
+from collections import deque
+
 class TaskEnvironment(object):
 
 	def __init__(self, environment, state_transition_law, sensors, performance_measure):
@@ -11,7 +13,7 @@ class History(object):
 	def __init__(self, task_environment, agent, number_of_steps, initial_state=None):
 
 		state = task_environment.environment.state() if initial_state == None else initial_state
-		history = [(state, None)]
+		history = deque([(state, None)])
 
 		for i in range(number_of_steps):
 			print 'STEP', i
@@ -23,4 +25,5 @@ class History(object):
 			state = task_environment.state_transition_law(state, action)
 			history.append((state, action))
 
+		self.history = history
 		self.performance_score = task_environment.performance_measure(history)
