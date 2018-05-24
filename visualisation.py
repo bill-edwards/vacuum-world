@@ -14,20 +14,21 @@ TILE_SIZE = 100
 
 def draw_history(floor, history):
 
-	def draw_tile(tile, colour):
-		x, y = (TILE_SIZE * coord + 20 for coord in tile)
+	def draw_tile(tile, colour, offsets):
+		x, y = (TILE_SIZE * (coord - offset) + 20 for coord, offset in zip(tile, offsets))
 		pygame.draw.rect(screen, BLACK, [x, y, TILE_SIZE, TILE_SIZE])
 		pygame.draw.rect(screen, colour, [x+1, y+1, TILE_SIZE-2, TILE_SIZE-2])
 
-	def draw_vacuum(tile):
-		x, y = ((TILE_SIZE * coord) + 20 + TILE_SIZE/2 for coord in tile)
+	def draw_vacuum(tile, offsets):
+		x, y = ((TILE_SIZE * (coord - offset)) + 20 + TILE_SIZE/2 for coord, offset in zip(tile, offsets))
 		pygame.draw.circle(screen, VACUUM_COLOUR, [x,y], TILE_SIZE/3)
 
 	def draw_floor(floor, state, time_step):
+		offsets = (floor.x_min, floor.y_min)
 		for tile in floor.tiles:
 			colour = DIRT_COLOUR if tile in state.dirty_tiles else TILE_COLOUR
-			draw_tile(tile, colour)
-		draw_vacuum(state.vacuum_location)
+			draw_tile(tile, colour, offsets)
+		draw_vacuum(state.vacuum_location, offsets)
 		text = font.render(str(time_step), True, BLUE)
 		screen.blit(text, [240, 20])
 

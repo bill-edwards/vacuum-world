@@ -8,6 +8,12 @@ class Floor(object):
 			self.tiles = lay_tiles(number_of_tiles)
 		else:
 			self.tiles = tiles
+		x_coords = [x for (x,y) in self.tiles]
+		self.x_min = min(x_coords)
+		self.x_max = max(x_coords)
+		y_coords = [y for (x,y) in self.tiles]
+		self.y_min = min(y_coords)
+		self.y_max = max(y_coords)
 
 	def state(self, vacuum_location=None, dirty_tiles=None):
 
@@ -30,6 +36,10 @@ class Floor(object):
 					new_location = (x+1, y)
 				elif (direction == 'LEFT'):
 					new_location = (x-1, y)
+				elif (direction == 'UP'):
+					new_location = (x, y+1)
+				elif (direction == 'DOWN'):
+					new_location = (x, y-1)
 				else:
 					new_location = (x, y)
 				return self.state(new_location if new_location in self.tiles else state_self.vacuum_location, state_self.dirty_tiles)
@@ -72,3 +82,10 @@ def lay_tiles(number_of_tiles):
 def neighbours(tile):
 	x, y = tile
 	return {(x+1, y), (x-1, y), (x, y+1), (x, y-1)}
+
+def lay_square_floor(edge_length):
+	tiles = set()
+	for x in range(edge_length):
+		for y in range(edge_length):
+			tiles.add((x,y))
+	return tiles

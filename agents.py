@@ -1,3 +1,4 @@
+import random
 from vacuum_exceptions import UnexpectedPerceptError
 
 class TwoTileSimpleReflex(object):
@@ -39,3 +40,21 @@ class TwoTileModelBasedReflex(object):
 				return 'LEFT'
 		else:
 			raise UnexpectedPerceptError(percepts)
+
+class Random2DSimpleReflex(object):
+
+	def think(self, percepts):
+		dirt_percept, location_percept = percepts
+
+		if (dirt_percept):
+			return 'SUCK'
+		else:
+			random_number = random.random()
+			if random_number < 0.25:
+				return 'UP'
+			elif random_number < 0.5:
+				return 'RIGHT'
+			elif random_number < 0.75:
+				return 'DOWN'
+			else: 
+				return 'LEFT'
