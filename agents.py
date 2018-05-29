@@ -1,6 +1,8 @@
 import random
 from vacuum_exceptions import UnexpectedPerceptError
 
+# Simple Reflex Agents
+
 class TwoTileSimpleReflex(object):
 
 	def think(self, percepts):
@@ -14,6 +16,26 @@ class TwoTileSimpleReflex(object):
 			return 'LEFT'
 		else:
 			raise UnexpectedPerceptError(percepts)
+
+class Random2DSimpleReflex(object):
+
+	def think(self, percepts):
+		dirt_percept, location_percept = percepts
+
+		if (dirt_percept):
+			return 'SUCK'
+		else:
+			random_number = random.random()
+			if random_number < 0.25:
+				return 'UP'
+			elif random_number < 0.5:
+				return 'RIGHT'
+			elif random_number < 0.75:
+				return 'DOWN'
+			else: 
+				return 'LEFT'
+
+# Model-based Reflex Agents
 
 class TwoTileModelBasedReflex(object):
 
@@ -41,20 +63,23 @@ class TwoTileModelBasedReflex(object):
 		else:
 			raise UnexpectedPerceptError(percepts)
 
-class Random2DSimpleReflex(object):
+# Goal-based Agents
+
+# Generic problem solver (goal-based agent with atomic internal model)
+class ProblemSolver(object):
+
+	def __init__(self, problem, search_algorithm):
+		self.problem = problem
+		self.search = search_algorithm
+		self.plan_formulated = False
 
 	def think(self, percepts):
-		dirt_percept, location_percept = percepts
-
-		if (dirt_percept):
-			return 'SUCK'
+		if not self.plan_formulated:
+			self.action_plan = self.search(self.problem, percepts[0])
+			self.plan_formulated = True
+			print 'Got a plan!'
+			print self.action_plan
+		if len(self.action_plan):
+			return self.action_plan.pop()
 		else:
-			random_number = random.random()
-			if random_number < 0.25:
-				return 'UP'
-			elif random_number < 0.5:
-				return 'RIGHT'
-			elif random_number < 0.75:
-				return 'DOWN'
-			else: 
-				return 'LEFT'
+			return 'NONE'

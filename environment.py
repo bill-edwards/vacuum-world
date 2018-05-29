@@ -15,7 +15,7 @@ class Floor(object):
 		self.y_min = min(y_coords)
 		self.y_max = max(y_coords)
 
-	def state(self, vacuum_location=None, dirty_tiles=None):
+	def state(self, vacuum_location=None, dirty_tiles=None, dirt_probability=0.5):
 
 		class State(object):
 
@@ -52,13 +52,20 @@ class Floor(object):
 			def dirty_tiles(state_self, tiles_to_dirty):
 				return self.state(self.vacuum_location, self.dirty_tiles | tiles_to_dirty)
 
+			def stringify(self):
+				string_id = str(self.vacuum_location) + '-'
+				for tile in sorted(self.dirty_tiles):
+					string_id += str(tile)
+				return string_id
+
+
 		if vacuum_location == None:
 			vacuum_location = random.sample(self.tiles, 1)[0]
 
 		if (dirty_tiles == None):
 			dirty_tiles = set()
 			for tile in self.tiles:
-				if (random.random() < 0.75):
+				if (random.random() < dirt_probability):
 					dirty_tiles.add(tile)
 
 		return State(vacuum_location, dirty_tiles)

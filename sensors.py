@@ -5,3 +5,7 @@ def dirt_detector(state):
 # Returns the tile currently occupied by the vacuum.
 def locator(state):
 	return state.vacuum_location
+
+# Makes environment fully-observable for agent.
+def all_seeing_eye(state):
+	return state
