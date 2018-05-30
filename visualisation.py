@@ -62,7 +62,7 @@ def draw_history(floor, history):
 
 	while not done:
 
-		clock.tick(1)
+		clock.tick(2)
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT: done = True
