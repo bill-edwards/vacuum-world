@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 from vacuum_exceptions import UnexpectedPerceptError
 
 # Simple Reflex Agents
@@ -86,10 +87,11 @@ class ProblemSolver(object):
 
 	def think(self, percepts):
 		if not self.plan_formulated:
+			start_time = datetime.now()
 			self.action_plan = self.search(self.problem, percepts[0])
+			end_time = datetime.now()
+			print 'search time: ', end_time - start_time
 			self.plan_formulated = True
-			print 'Got a plan!'
-			print self.action_plan
 		if len(self.action_plan):
 			return self.action_plan.pop()
 		else:
