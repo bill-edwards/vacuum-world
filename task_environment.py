@@ -16,12 +16,8 @@ class History(object):
 		history = deque([(state, None)])
 
 		for i in range(number_of_steps):
-			print 'STEP', i
-			print 'State', state.vacuum_location, state.dirty_tiles
 			percepts = [sensor(state) for sensor in task_environment.sensors]
 			action = agent.think(percepts)
-			print 'Percepts', percepts
-			print 'Action', action
 			state = task_environment.state_transition_law(state, action)
 			history.append((state, action))
 

@@ -71,7 +71,6 @@ class PriorityQueueFrontier(object):
 		return len(self.set)
 
 	def get_path_cost_to_state(self, state):
-		print 'GPC'
 		nodes = [node for node in self.queue if node.state.stringify() == state.stringify()]
 		if len(nodes) == 0: return None
 		else:
@@ -79,7 +78,6 @@ class PriorityQueueFrontier(object):
 
 	# Given a state S and a node N with matching state, replaces any node N' whose state is S with N.
 	def replace_node(self, state, node):
-		print 'RN'
 		indices = [index for (index, node) in enumerate(self.queue) if node.state.stringify() == state.stringify()]
 		if len(indices) != 0:
 			index = indices[0]
