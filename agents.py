@@ -35,6 +35,17 @@ class Random2DSimpleReflex(object):
 			else: 
 				return 'LEFT'
 
+class SimpleReflex(object):
+
+	def __init__(self, rules):
+		self.rules = rules
+
+	def think(self, percepts):
+
+		for rule in self.rules:
+			if rule['condition'](percepts):
+				return rule['action']
+
 # Model-based Reflex Agents
 
 class TwoTileModelBasedReflex(object):
