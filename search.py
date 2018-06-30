@@ -50,13 +50,14 @@ class FIFOFrontier(object):
 
 class PriorityQueueFrontier(object):
 
-	def __init__(self):
+	def __init__(self, orderer):
 		self.queue = []
 		self.set = set()
+		self.orderer = orderer
 
 	def add(self, node):
 		self.queue.append(node)
-		self.queue.sort(key = lambda node: node.path_cost, reverse=True)
+		self.queue.sort(key = self.orderer, reverse=True)
 		self.set.add(node.state.stringify())
 
 	def pop(self):
@@ -74,15 +75,15 @@ class PriorityQueueFrontier(object):
 		nodes = [node for node in self.queue if node.state.stringify() == state.stringify()]
 		if len(nodes) == 0: return None
 		else:
-			return nodes[0].path_cost
+			return self.orderer(nodes[0])
 
 	# Given a state S and a node N with matching state, replaces any node N' whose state is S with N.
 	def replace_node(self, state, node):
-		indices = [index for (index, node) in enumerate(self.queue) if node.state.stringify() == state.stringify()]
+		indices = [index for (index, n) in enumerate(self.queue) if n.state.stringify() == state.stringify()]
 		if len(indices) != 0:
 			index = indices[0]
 			self.queue[index] = node
-			self.queue.sort(key = lambda node: node.path_cost, reverse=True)
+			self.queue.sort(key = self.orderer, reverse=True)
 
 
 # The search algorithms themselves
@@ -111,26 +112,39 @@ def breadth_first_graph_search(problem, initial_state):
 				if problem.goal_test(child_node.state): return generate_solution(child_node)
 				frontier.add(child_node)
 
-def uniform_cost_graph_search(problem, initial_state):
+def best_first_graph_search(evaluation_function):
 
-	if problem.goal_test(initial_state): return []
+	def search_function(problem, initial_state):
 
-	node = Node(initial_state, None, None, 0)
-	frontier = PriorityQueueFrontier()
-	frontier.add(node)
-	explored = set()
-	i = 0
+		if problem.goal_test(initial_state): return []
 
-	while True:
-		print i, frontier.size()
-		i += 1
-		if frontier.size() == 0: return 'FAILURE'
-		node = frontier.pop()
-		if problem.goal_test(node.state): return generate_solution(node)
-		explored.add(node.state.stringify())
-		for action in problem.actions(node.state):
-			child_node = generate_child_node(problem, node, action)
-			if (child_node.state.stringify() not in explored and not frontier.test_membership(child_node.state)):
-				frontier.add(child_node)
-			elif (frontier.test_membership(child_node.state) and frontier.get_path_cost_to_state(child_node.state) > child_node.path_cost):
-				frontier.replace_node(child_node.state, child_node)
+		node = Node(initial_state, None, None, 0)
+		frontier = PriorityQueueFrontier(evaluation_function)
+		frontier.add(node)
+		explored = set()
+		i = 0
+
+		while True:
+			print i, frontier.size()
+			i += 1
+			if frontier.size() == 0: return 'FAILURE'
+			node = frontier.pop()
+			if problem.goal_test(node.state): return generate_solution(node)
+			explored.add(node.state.stringify())
+			for action in problem.actions(node.state):
+				child_node = generate_child_node(problem, node, action)
+				if (child_node.state.stringify() not in explored and not frontier.test_membership(child_node.state)):
+					frontier.add(child_node)
+				elif (frontier.test_membership(child_node.state) and frontier.get_path_cost_to_state(child_node.state) > child_node.path_cost):
+					frontier.replace_node(child_node.state, child_node)
+
+	return search_function
+
+def uniform_cost_graph_search():
+	return best_first_graph_search(lambda node: node.path_cost)
+
+def greedy_best_first_search(heuristic):
+	return best_first_graph_search(heuristic)
+
+def a_star_search(heuristic):
+	return best_first_graph_search(lambda node: node.path_cost + heuristic(node))
