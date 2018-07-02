@@ -4,38 +4,6 @@ from vacuum_exceptions import UnexpectedPerceptError
 
 # Simple Reflex Agents
 
-class TwoTileSimpleReflex(object):
-
-	def think(self, percepts):
-		dirt_percept, location_percept = percepts
-
-		if (dirt_percept):
-			return 'SUCK'
-		elif (location_percept == (0,0)):
-			return 'RIGHT'
-		elif (location_percept == (1,0)):
-			return 'LEFT'
-		else:
-			raise UnexpectedPerceptError(percepts)
-
-class Random2DSimpleReflex(object):
-
-	def think(self, percepts):
-		dirt_percept, location_percept = percepts
-
-		if (dirt_percept):
-			return 'SUCK'
-		else:
-			random_number = random.random()
-			if random_number < 0.25:
-				return 'UP'
-			elif random_number < 0.5:
-				return 'RIGHT'
-			elif random_number < 0.75:
-				return 'DOWN'
-			else: 
-				return 'LEFT'
-
 class SimpleReflex(object):
 
 	def __init__(self, rules):
@@ -46,6 +14,23 @@ class SimpleReflex(object):
 		for rule in self.rules:
 			if rule['condition'](percepts):
 				return rule['action']
+
+class StochasticSimpleReflex(object):
+
+	def __init__(self, rules):
+		self.rules = rules
+
+	def think(self, percepts):
+
+		random_number = random.random()
+		cumulative_probability = 0
+
+		for rule in self.rules:
+			if rule['condition'](percepts):
+				for action in rule['actions']:
+					cumulative_probability += action[0]
+					if random_number < cumulative_probability:
+						return action[1]
 
 # Model-based Reflex Agents
 
