@@ -73,8 +73,8 @@ def draw_history(floor, history):
 			state = history.history.popleft()[0]
 			draw_floor(floor, state, time_step)
 		else:
-			text = font.render('Performance: ' + str(history.performance_score), True, BLACK)
-			screen.blit(text, [BORDER,BORDER])
+			done = True
+
 
 		time_step += 1
 		pygame.display.flip()
