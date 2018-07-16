@@ -1,3 +1,4 @@
 *.pyc
 *.rtf
 *.ipynb
+examples/
