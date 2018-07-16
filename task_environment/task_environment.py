@@ -22,4 +22,4 @@ class History(object):
 			history.append((state, action))
 
 		self.history = history
-		self.performance_score = task_environment.performance_measure(history)
+		self.performance_score = sum([task_environment.performance_measure(episode) for episode in history])

@@ -1,8 +1,9 @@
 class Problem(object):
 
-	def __init__(self, floor, law):
-		self.floor = floor
-		self.law = law
+	def __init__(self, task_env):
+		self.floor = task_env.environment
+		self.law = task_env.state_transition_law
+		self.pm = task_env.performance_measure
 
 	# Returns a list of strings representing actions that will have some observable effect in the given state.
 	def actions(self, state):
@@ -24,9 +25,8 @@ class Problem(object):
 		return self.law(state, action)
 
 	def path_cost(self, state, action):
-		dirt_cost = len(state.dirty_tiles)
-		movement_cost = 1 if action in ['RIGHT', 'LEFT', 'UP', 'DOWN'] else 0
-		return dirt_cost + movement_cost
+		episode = (state, action)
+		return self.pm(episode)
 
 	def goal_test(self, state):
 		return True if len(state.dirty_tiles) == 0 else False
