@@ -36,6 +36,26 @@ class StochasticSimpleReflex(object):
 		else:
 			raise UnexpectedPerceptError(percepts)
 
+# Model-based Reflex Agents
+
+class ModelBasedReflex(object):
+
+	def __init__(self, model, rules):
+		self.model = model
+		self.rules = rules
+
+	def think(self, percepts):
+		self.model.update_with_percept(percepts)
+
+		for rule in self.rules:
+			if rule['condition'](self.model):
+				action = rule['action']
+				break
+		else: action = 'NONE'
+
+		self.model.update_with_action(action)
+		return action
+
 # Goal-based Agents
 
 # Generic problem solver (goal-based agent with atomic internal model)
