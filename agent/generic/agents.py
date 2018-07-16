@@ -14,6 +14,8 @@ class SimpleReflex(object):
 		for rule in self.rules:
 			if rule['condition'](percepts):
 				return rule['action']
+		else:
+			raise UnexpectedPerceptError(percepts)
 
 class StochasticSimpleReflex(object):
 
@@ -31,32 +33,6 @@ class StochasticSimpleReflex(object):
 					cumulative_probability += action[0]
 					if random_number < cumulative_probability:
 						return action[1]
-
-# Model-based Reflex Agents
-
-class TwoTileModelBasedReflex(object):
-
-	def __init__(self):
-		self.cleaned_tiles = set()
-
-	def think(self, percepts):
-		dirt_percept, location_percept = percepts
-
-		if (dirt_percept):
-			self.cleaned_tiles.add(location_percept)
-			return 'SUCK'
-		elif (location_percept == (0,0)):
-			self.cleaned_tiles.add(location_percept)
-			if ((1,0) in self.cleaned_tiles):
-				return 'NONE'
-			else:
-				return 'RIGHT'
-		elif (location_percept == (1,0)):
-			self.cleaned_tiles.add(location_percept)
-			if ((0,0) in self.cleaned_tiles):
-				return 'NONE'
-			else:
-				return 'LEFT'
 		else:
 			raise UnexpectedPerceptError(percepts)
 
