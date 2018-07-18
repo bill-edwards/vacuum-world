@@ -1,9 +1,10 @@
 import random
-from vacuum_exceptions import InvalidStateError
+from vacuum_exceptions import InvalidStateError, InvalidActionError
 
 class Floor(object):
 
-	def __init__(self, tiles=None, number_of_tiles=20):
+	def __init__(self, laws, tiles=None, number_of_tiles=20):
+		self.laws = laws
 		if (tiles == None):
 			self.tiles = lay_tiles(number_of_tiles)
 		else:
@@ -15,6 +16,7 @@ class Floor(object):
 		self.y_min = min(y_coords)
 		self.y_max = max(y_coords)
 
+	# Returns an environment State object.
 	def state(self, vacuum_location=None, dirty_tiles=None, dirt_probability=0.5):
 
 		class State(object):
@@ -70,6 +72,21 @@ class Floor(object):
 
 		return State(vacuum_location, dirty_tiles)
 
+	# Evolution law for environment states.
+	def tick(self, old_state, action):
+		for law in self.laws:
+			if action == law['action']:
+				if 'state_transform' in law:
+					return law['state_transform'](old_state)
+				elif 'state_transforms' in law: # Handling non-deterministic laws
+					cumulative_probability = 0
+					random_number = random.random()
+					for transform in law['state_transforms']:
+						cumulative_probability += transform[0]
+						if random_number < cumulative_probability:
+							return transform[1](old_state)
+		else:
+			return old_state
 
 # Utility to create a connected set of tiles of a given number.
 # Begins with tile (0,0) and successively adds a tile at a randomly chosen point on the edge of the existing tiles.

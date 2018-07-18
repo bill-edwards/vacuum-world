@@ -2,9 +2,8 @@ from collections import deque
 
 class TaskEnvironment(object):
 
-	def __init__(self, environment, state_transition_law, sensors, performance_measure):
+	def __init__(self, environment, sensors, performance_measure):
 		self.environment = environment
-		self.state_transition_law = state_transition_law
 		self.sensors = sensors
 		self.performance_measure = performance_measure
 
@@ -18,7 +17,7 @@ class History(object):
 		for i in range(number_of_steps):
 			percepts = [sensor(state) for sensor in task_environment.sensors]
 			action = agent.think(percepts)
-			state = task_environment.state_transition_law(state, action)
+			state = task_environment.environment.tick(state, action)
 			history.append((state, action))
 
 		self.history = history

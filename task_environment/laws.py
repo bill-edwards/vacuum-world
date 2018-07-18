@@ -1,23 +1,65 @@
-from vacuum_exceptions import InvalidActionError
+standard = [
+    {
+        'action': 'SUCK',
+        'state_transform': (lambda state: state.clean_tile(state.vacuum_location))
+    },
+    {
+        'action': 'RIGHT',
+        'state_transform': (lambda state: state.move_vacuum('RIGHT'))
+    },
+    {
+        'action': 'LEFT',
+        'state_transform': (lambda state: state.move_vacuum('LEFT'))
+    },
+    {
+        'action': 'UP',
+        'state_transform': (lambda state: state.move_vacuum('UP'))
+    },
+    {
+        'action': 'DOWN',
+        'state_transform': (lambda state: state.move_vacuum('DOWN'))
+    },
+    {
+        'action': 'NONE',
+        'state_transform': (lambda state: state)
+    }
+]
 
-def standard(old_state, action):
-
-	if (action == 'SUCK'):
-		return old_state.clean_tile(old_state.vacuum_location)
-	elif (action in ('RIGHT', 'LEFT', 'UP', 'DOWN')):
-		return old_state.move_vacuum(action)
-	elif (action == 'NONE'):
-		return old_state
-	else:
-		raise InvalidActionError(action)
-
-def slippery(old_state, action):
-
-	if (action == 'SUCK'):
-		return old_state.clean_tile(old_state.vacuum_location)
-	elif (action in ('RIGHT', 'LEFT', 'UP', 'DOWN')):
-		return old_state.move_vacuum(action) if (random.random() < 0.75) else old_state
-	elif (action == 'NONE'):
-		return old_state
-	else:
-		raise InvalidActionError(action)
+slippery = [
+    {
+        'action': 'SUCK',
+        'state_transform': (lambda state: state.clean_tile(state.vacuum_location))
+    },
+    {
+        'action': 'RIGHT',
+        'state_transforms': [
+            (0.75, (lambda state: state.move_vacuum('RIGHT'))),
+            (0.25, (lambda state: state))
+        ]
+    },
+    {
+        'action': 'LEFT',
+        'state_transforms': [
+            (0.75, (lambda state: state.move_vacuum('LEFT'))),
+            (0.25, (lambda state: state))
+        ]
+    },
+    {
+        'action': 'UP',
+        'state_transforms': [
+            (0.75, (lambda state: state.move_vacuum('UP'))),
+            (0.25, (lambda state: state))
+        ]
+    },
+    {
+        'action': 'DOWN',
+        'state_transforms': [
+            (0.75, (lambda state: state.move_vacuum('DOWN'))),
+            (0.25, (lambda state: state))
+        ]
+    },
+    {
+        'action': 'NONE',
+        'state_transform': (lambda state: state)
+    }
+]
