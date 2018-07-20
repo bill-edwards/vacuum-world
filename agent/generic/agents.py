@@ -67,7 +67,6 @@ class ProblemSolver(object):
 		self.log = {} if log else None
 
 	def think(self, percepts):
-		if self.log: 'this will be logged'
 		if not self.plan_formulated:
 			self.action_plan = self.search(self.problem, percepts[0], log=self.log)
 			self.plan_formulated = True

@@ -1,8 +1,9 @@
 class Problem(object):
 
-	def __init__(self, task_env):
+	def __init__(self, task_env, goal_test):
 		self.env = task_env.environment
 		self.pm = task_env.performance_measure
+		self.goal_test = goal_test
 
 	def actions(self, state):
 		return [law['action'] for law in self.env.laws]
@@ -23,6 +24,3 @@ class Problem(object):
 	def path_cost(self, state, action):
 		episode = (state, action)
 		return self.pm(episode)
-
-	def goal_test(self, state):
-		return True if len(state.dirty_tiles) == 0 else False
