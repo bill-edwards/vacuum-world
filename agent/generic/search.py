@@ -154,20 +154,23 @@ def a_star_search(heuristic):
 def depth_first_tree_search(problem, initial_state, limit=None):
 	
 	node = Node(initial_state, None, None, 0, 0)
-	frontier = []
-	frontier.append(node)
+	frontier = [node]
+	path = []
 	i = 0
 
 	while True:
-		print i, len(frontier)
+		print i, len(frontier), len(path)
 		i += 1
 		if len(frontier) == 0: return 'FAILURE'
 		node = frontier.pop()
 		if problem.goal_test(node.state): return generate_solution(node)
+		path = path[:node.depth]
+		path.append(node.state.stringify())
 		if (limit == None or node.depth < limit):
 			for action in problem.actions(node.state):
 				child_node = generate_child_node(problem, node, action)
-				frontier.append(child_node)
+				if (child_node.state.stringify() not in path):
+					frontier.append(child_node)
 
 def iterative_deepening_tree_search(problem, initial_state):
 
@@ -177,4 +180,3 @@ def iterative_deepening_tree_search(problem, initial_state):
 		result = depth_first_tree_search(problem, initial_state, limit)
 		if result != 'FAILURE': return result
 		limit += 1
-
