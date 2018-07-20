@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 from vacuum_exceptions import UnexpectedPerceptError
 
 # Simple Reflex Agents
@@ -61,16 +60,16 @@ class ModelBasedReflex(object):
 # Generic problem solver (goal-based agent with atomic internal model)
 class ProblemSolver(object):
 
-	def __init__(self, problem, search_algorithm):
+	def __init__(self, problem, search_algorithm, log=False):
 		self.problem = problem
 		self.search = search_algorithm
 		self.plan_formulated = False
+		self.log = {} if log else None
 
 	def think(self, percepts):
+		if self.log: 'this will be logged'
 		if not self.plan_formulated:
-			start_time = datetime.now()
-			self.action_plan = self.search(self.problem, percepts[0])
-			print 'search time: ', datetime.now() - start_time
+			self.action_plan = self.search(self.problem, percepts[0], log=self.log)
 			self.plan_formulated = True
 		if len(self.action_plan):
 			return self.action_plan.pop()

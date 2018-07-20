@@ -1,4 +1,5 @@
 from collections import deque
+from datetime import datetime
 
 # Supporting machinery for building search trees.
 
@@ -92,7 +93,11 @@ class PriorityQueueFrontier(object):
 
 # TO DO: (i) Record actual time taken to find solution; (ii) Record number of nodes expanded; (iii) Make printing to screen optional.
 
-def breadth_first_graph_search(problem, initial_state):
+def breadth_first_graph_search(problem, initial_state, log=None):
+
+	if log != None:
+		start_time = datetime.now()
+		log['frontier_size'] = []
 
 	if problem.goal_test(initial_state): return []
 
@@ -100,23 +105,27 @@ def breadth_first_graph_search(problem, initial_state):
 	frontier = FIFOFrontier()
 	frontier.add(node)
 	explored = set()
-	i = 0
 
 	while True:
-		print i, frontier.size()
-		i += 1
+		if log: log['frontier_size'].append(frontier.size())
 		if frontier.size() == 0: return 'FAILURE'
 		node = frontier.pop()
 		explored.add(node.state.stringify())
 		for action in problem.actions(node.state):
 			child_node = generate_child_node(problem, node, action)
 			if (child_node.state.stringify() not in explored and not frontier.test_membership(child_node.state)):
-				if problem.goal_test(child_node.state): return generate_solution(child_node)
+				if problem.goal_test(child_node.state):
+					if log: log['running_time'] = datetime.now() - start_time
+					return generate_solution(child_node)
 				frontier.add(child_node)
 
 def best_first_graph_search(evaluation_function):
 
-	def search_function(problem, initial_state):
+	def search_function(problem, initial_state, log=None):
+
+		if log != None:
+			start_time = datetime.now()
+			log['frontier_size'] = []
 
 		if problem.goal_test(initial_state): return []
 
@@ -124,14 +133,14 @@ def best_first_graph_search(evaluation_function):
 		frontier = PriorityQueueFrontier(evaluation_function)
 		frontier.add(node)
 		explored = set()
-		i = 0
 
 		while True:
-			print i, frontier.size()
-			i += 1
+			if log: log['frontier_size'].append(frontier.size())
 			if frontier.size() == 0: return 'FAILURE'
 			node = frontier.pop()
-			if problem.goal_test(node.state): return generate_solution(node)
+			if problem.goal_test(node.state):
+				if log: log['running_time'] = datetime.now() - start_time
+				return generate_solution(node)
 			explored.add(node.state.stringify())
 			for action in problem.actions(node.state):
 				child_node = generate_child_node(problem, node, action)
