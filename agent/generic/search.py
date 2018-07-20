@@ -88,8 +88,6 @@ class PriorityQueueFrontier(object):
 
 # The search algorithms themselves
 
-# TO DO: (i) Record actual time taken to find solution; (ii) Record number of nodes expanded; (iii) Make printing to screen optional.
-
 def breadth_first_graph_search(problem, initial_state):
 
 	if problem.goal_test(initial_state): return []
@@ -148,3 +146,13 @@ def greedy_best_first_search(heuristic):
 
 def a_star_search(heuristic):
 	return best_first_graph_search(lambda node: node.path_cost + heuristic(node))
+
+
+# AND-OR search to generate contingency plans for non-deterministic search graphs.
+def and_or_search(problem, initial_state):
+
+# Chooses from the possible actions that can be taken in a given state.
+def or_search(state, problem, path):
+
+# Maps plans to all possible outcome states resulting from a given action.
+def and_search(states, problem, path):

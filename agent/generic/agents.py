@@ -58,7 +58,9 @@ class ModelBasedReflex(object):
 
 # Goal-based Agents
 
-# Generic problem solver (goal-based agent with atomic internal model)
+# Problem-solvers (goal-based agents with atomic internal model)
+
+# Fully-observable deterministic environment.
 class ProblemSolver(object):
 
 	def __init__(self, problem, search_algorithm):
@@ -74,5 +76,28 @@ class ProblemSolver(object):
 			self.plan_formulated = True
 		if len(self.action_plan):
 			return self.action_plan.pop()
+		else:
+			return 'NONE'
+
+# Fully-observable non-deterministic environment.
+class NonDeterministicProblemSolver(object):
+
+	def __init__(self, problem, search_algorithm):
+		self.problem = problem
+		self.search = search_algorithm
+		self.plan_formulated = False
+
+	def think(self, percepts):
+		if not self.plan_formulated:
+			self.plan = self.search(self.problem, percepts[0])
+			self.plan_formulated = True
+		if len(self.plan):
+			state = percepts[0].stringify()
+			if state not in self.plan:
+				raise UnexpectedPerceptError(percepts)
+			else:
+				action = self.plan[state][0]
+				self.plan = self.plan[state][1]
+				return action
 		else:
 			return 'NONE'
