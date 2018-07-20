@@ -4,11 +4,12 @@ from collections import deque
 
 class Node(object):
 
-	def __init__(self, state, parent, action, path_cost):
+	def __init__(self, state, parent, action, path_cost, depth):
 		self.state = state
 		self.parent = parent
 		self.action = action
 		self.path_cost = path_cost
+		self.depth = depth
 
 def generate_child_node(problem, node, action):
 
@@ -16,7 +17,8 @@ def generate_child_node(problem, node, action):
 		problem.result(node.state, action),
 		node,
 		action,
-		node.path_cost + problem.path_cost(node.state, action)
+		node.path_cost + problem.path_cost(node.state, action),
+		node.depth + 1
 	)
 
 def generate_solution(node):
@@ -92,7 +94,7 @@ def breadth_first_graph_search(problem, initial_state):
 
 	if problem.goal_test(initial_state): return []
 
-	node = Node(initial_state, None, None, 0)
+	node = Node(initial_state, None, None, 0, 0)
 	frontier = FIFOFrontier()
 	frontier.add(node)
 	explored = set()
@@ -110,13 +112,43 @@ def breadth_first_graph_search(problem, initial_state):
 				if problem.goal_test(child_node.state): return generate_solution(child_node)
 				frontier.add(child_node)
 
+def depth_first_tree_search(problem, initial_state, limit=None):
+	
+	node = Node(initial_state, None, None, 0, 0)
+	frontier = [node]
+	path = []
+	i = 0
+
+	while True:
+		print i, len(frontier), len(path)
+		i += 1
+		if len(frontier) == 0: return 'FAILURE'
+		node = frontier.pop()
+		if problem.goal_test(node.state): return generate_solution(node)
+		path = path[:node.depth]
+		path.append(node.state.stringify())
+		if (limit == None or node.depth < limit):
+			for action in problem.actions(node.state):
+				child_node = generate_child_node(problem, node, action)
+				if (child_node.state.stringify() not in path):
+					frontier.append(child_node)
+
+def iterative_deepening_tree_search(problem, initial_state):
+
+	limit = 1;
+	while True:
+		print 'Depth-first tree search with limit ', limit
+		result = depth_first_tree_search(problem, initial_state, limit)
+		if result != 'FAILURE': return result
+		limit += 1
+
 def best_first_graph_search(evaluation_function):
 
 	def search_function(problem, initial_state):
 
 		if problem.goal_test(initial_state): return []
 
-		node = Node(initial_state, None, None, 0)
+		node = Node(initial_state, None, None, 0, 0)
 		frontier = PriorityQueueFrontier(evaluation_function)
 		frontier.add(node)
 		explored = set()
